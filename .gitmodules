@@ -43,7 +43,7 @@
 	url = git://github.com/mono/sharpsvn-binary.git
 [submodule "main/external/libgit2sharp"]
 	path = main/external/libgit2sharp
-	url = git://github.com/mono/libgit2sharp.git
+	url = ~/Projects/libgit2sharp
 	branch = xs-6.0-v1
 [submodule "main/external/libgit-binary"]
 	path = main/external/libgit-binary

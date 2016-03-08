@@ -416,72 +416,72 @@ namespace MonoDevelop.Core
 			absPath = GetFullPath (absPath);
 			baseDirectoryPath = GetFullPath (baseDirectoryPath).TrimEnd (Path.DirectorySeparatorChar);
 
-			fixed (char* bPtr = baseDirectoryPath, aPtr = absPath) {
-				var bEnd = bPtr + baseDirectoryPath.Length;
-				var aEnd = aPtr + absPath.Length;
-				char* lastStartA = aEnd;
-				char* lastStartB = bEnd;
+            int bi = 0;
+            int ai = 0;
+            int bEnd = baseDirectoryPath.Length;
+            int aEnd = absPath.Length;
+            int lastStartA = aEnd;
+            int lastStartB = bEnd;
+            int indx = 0;
 
-				int indx = 0;
-				// search common base path
-				var a = aPtr;
-				var b = bPtr;
-				while (a < aEnd) {
-					if (!PathCharsAreEqual (*a, *b))
-						break;
-					if (IsSeparator (*a)) {
-						indx++;
-						lastStartA = a + 1;
-						lastStartB = b;
-					}
-					a++;
-					b++;
-					if (b >= bEnd) {
-						if (a >= aEnd || IsSeparator (*a)) {
-							indx++;
-							lastStartA = a + 1;
-							lastStartB = b;
-						}
-						break;
-					}
-				}
-				if (indx == 0)
-					return absPath;
+            // search common base path
+            var a = ai;
+            var b = bi;
+            while (a < aEnd) {
+                if (!PathCharsAreEqual (absPath [a], baseDirectoryPath [b]))
+                    break;
+                if (IsSeparator (absPath [a])) {
+                    indx++;
+                    lastStartA = a + 1;
+                    lastStartB = b;
+                }
+                a++;
+                b++;
+                if (b >= bEnd) {
+                    if (a >= aEnd || IsSeparator (absPath [a])) {
+                        indx++;
+                        lastStartA = a + 1;
+                        lastStartB = b;
+                    }
+                    break;
+                }
+            }
+            if (indx == 0)
+                return absPath;
 
-				if (lastStartA >= aEnd)
-					return ".";
+            if (lastStartA >= aEnd)
+                return ".";
 
-				// handle case a: some/path b: some/path/deeper...
-				if (a >= aEnd) {
-					if (IsSeparator (*b)) {
-						lastStartA = a + 1;
-						lastStartB = b;
-					}
-				}
+            // handle case a: some/path b: some/path/deeper...
+            if (a >= aEnd) {
+                if (IsSeparator (baseDirectoryPath [b])) {
+                    lastStartA = a + 1;
+                    lastStartB = b;
+                }
+            }
 
-				// look how many levels to go up into the base path
-				int goUpCount = 0;
-				while (lastStartB < bEnd) {
-					if (IsSeparator (*lastStartB))
-						goUpCount++;
-					lastStartB++;
-				}
-				var size = goUpCount * 2 + goUpCount + aEnd - lastStartA;
-				var result = new char [size];
-				fixed (char* rPtr = result) {
-					// go paths up
-					var r = rPtr;
-					for (int i = 0; i < goUpCount; i++) {
-						*(r++) = '.';
-						*(r++) = '.';
-						*(r++) = Path.DirectorySeparatorChar;
-					}
-					// copy the remaining absulute path
-					while (lastStartA < aEnd)
-						*(r++) = *(lastStartA++);
-				}
-				return new string (result);
-			}
+            // look how many levels to go up into the base path
+            int goUpCount = 0;
+            while (lastStartB < bEnd) {
+                if (IsSeparator (baseDirectoryPath [lastStartB]))
+                    goUpCount++;
+                lastStartB++;
+            }
+            var size = goUpCount * 2 + goUpCount + aEnd - lastStartA;
+            var result = new char [size];
+            fixed (char* rPtr = result) {
+                // go paths up
+                var r = rPtr;
+                for (int i = 0; i < goUpCount; i++) {
+                    *(r++) = '.';
+                    *(r++) = '.';
+                    *(r++) = Path.DirectorySeparatorChar;
+                }
+                // copy the remaining absulute path
+                while (lastStartA < aEnd)
+                    *(r++) = absPath [lastStartA++];
+            }
+            return new string (result);
 		}
 
 		public static string RelativeToAbsolutePath (string baseDirectoryPath, string relPath)
