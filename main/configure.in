@@ -29,13 +29,18 @@ fi
 
 dnl Find pkg-config
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+echo "*** pkg-config: $PKG_CONFIG"
 if test "x$PKG_CONFIG" = "xno"; then
         AC_MSG_ERROR([You need to install pkg-config])
 fi
 
 MONO_REQUIRED_VERSION=4.0
 
-if ! $PKG_CONFIG --atleast-version=$MONO_REQUIRED_VERSION mono; then
+echo "$PKG_CONFIG --atleast-version=$MONO_REQUIRED_VERSION mono"
+PKG_CONFIG_PATH="$HOME/Projects/build-strings/lib/pkgconfig" $PKG_CONFIG --atleast-version=$MONO_REQUIRED_VERSION mono
+echo $?
+
+if ! PKG_CONFIG_PATH="$HOME/Projects/build-strings/lib/pkgconfig" $PKG_CONFIG --atleast-version=$MONO_REQUIRED_VERSION mono; then
 	AC_MSG_ERROR([You need mono $MONO_REQUIRED_VERSION or newer])
 fi
 
@@ -103,22 +108,22 @@ fi
 
 PKG_CHECK_MODULES(UNMANAGED_DEPENDENCIES_MONO,mono >= $MONO_REQUIRED_VERSION, has_mono=true, has_mono=false)
 
-if test "x$has_mono" = "xfalse"; then
-      AC_MSG_ERROR([Please install mono version $MONO_REQUIRED_VERSION or later to install MonoDevelop.
-Please see http://www.mono-project.org/ to download latest mono sources or packages])
-fi
+# if test "x$has_mono" = "xfalse"; then
+#       AC_MSG_ERROR([Please install mono version $MONO_REQUIRED_VERSION or later to install MonoDevelop.
+# Please see http://www.mono-project.org/ to download latest mono sources or packages])
+# fi
 
-if test "x$has_mono" = "xtrue"; then
-    AC_PATH_PROG(RUNTIME, mono, no)
-    AC_PATH_PROG(CSC, dmcs, no)
-    if test `uname -s` = "Darwin"; then
-	LIB_PREFIX=
-	LIB_SUFFIX=.dylib
-    else
-	LIB_PREFIX=.so
-	LIB_SUFFIX=
-    fi
+# if test "x$has_mono" = "xtrue"; then
+AC_PATH_PROG(RUNTIME, mono, no)
+AC_PATH_PROG(CSC, dmcs, no)
+if test `uname -s` = "Darwin"; then
+LIB_PREFIX=
+LIB_SUFFIX=.dylib
+else
+LIB_PREFIX=.so
+LIB_SUFFIX=
 fi
+# fi
 
 
 dnl hard dependencies
@@ -130,7 +135,7 @@ PKG_CHECK_MODULES(GLIB_SHARP, glib-sharp-2.0 >= $GTKSHARP_REQUIRED_VERSION)
 AC_SUBST(GLIB_SHARP_LIBS)
 PKG_CHECK_MODULES(GTK_SHARP, gtk-sharp-2.0 >= $GTKSHARP_REQUIRED_VERSION)
 AC_SUBST(GTK_SHARP_LIBS)
-PKG_CHECK_MODULES(GLADE_SHARP, glade-sharp-2.0 >= $GTKSHARP_REQUIRED_VERSION)
+# PKG_CHECK_MODULES(GLADE_SHARP, glade-sharp-2.0 >= $GTKSHARP_REQUIRED_VERSION)
 AC_SUBST(GLADE_SHARP_LIBS)
 
 PKG_CHECK_MODULES(MONODOC, monodoc >= $MONODOC_REQUIRED_VERSION)
@@ -144,7 +149,7 @@ AC_SUBST(GNOME_VFS_SHARP_LIBS)
 PKG_CHECK_MODULES(GCONF_SHARP, gconf-sharp-2.0 >= $GTKSHARP_REQUIRED_VERSION, [gconf_sharp=yes], [gconf_sharp=no])
 AC_SUBST(GCONF_SHARP_LIBS)
 
-gtksharp_prefix="`$PKG_CONFIG --variable=prefix gtk-sharp-2.0`"
+gtksharp_prefix="`PKG_CONFIG_PATH="$HOME/Projects/build-strings/lib/pkgconfig" $PKG_CONFIG --variable=prefix gtk-sharp-2.0`"
 AC_SUBST(gtksharp_prefix)
 
 ## nunit tests
