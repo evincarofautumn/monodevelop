@@ -264,34 +264,65 @@ namespace Mono.TextEditor
 
 		static unsafe internal Delimiter NextDelimiter (string text, int offset)
 		{
-			fixed (char* start = text) {
-				char* p = start + offset;
-				char* endPtr = start + text.Length;
+			return text.UnsafeApply (
+				(bytePtr) => {
+					byte* start = bytePtr.Value;
+					byte* p = start + offset;
+					byte* endPtr = start + text.Length;
 
-				while (p < endPtr) {
-					switch (*p) {
-					case NewLine.CR:
-						char* nextp = p + 1;
-						if (nextp < endPtr && *nextp == NewLine.LF)
-							return new Delimiter ((int)(p - start), UnicodeNewline.CRLF);
-						return new Delimiter ((int)(p - start), UnicodeNewline.CR);
-					case NewLine.LF:
-						return new Delimiter ((int)(p - start), UnicodeNewline.LF);
-					case NewLine.NEL:
-						return new Delimiter ((int)(p - start), UnicodeNewline.NEL);
-					case NewLine.VT:
-						return new Delimiter ((int)(p - start), UnicodeNewline.VT);
-					case NewLine.FF:
-						return new Delimiter ((int)(p - start), UnicodeNewline.FF);
-					case NewLine.LS:
-						return new Delimiter ((int)(p - start), UnicodeNewline.LS);
-					case NewLine.PS:
-						return new Delimiter ((int)(p - start), UnicodeNewline.PS);
+					while (p < endPtr) {
+						switch ((char)*p) {
+						case NewLine.CR:
+							byte* nextp = p + 1;
+							if (nextp < endPtr && (char)*nextp == NewLine.LF)
+								return new Delimiter ((int)(p - start), UnicodeNewline.CRLF);
+							return new Delimiter ((int)(p - start), UnicodeNewline.CR);
+						case NewLine.LF:
+							return new Delimiter ((int)(p - start), UnicodeNewline.LF);
+						case NewLine.NEL:
+							return new Delimiter ((int)(p - start), UnicodeNewline.NEL);
+						case NewLine.VT:
+							return new Delimiter ((int)(p - start), UnicodeNewline.VT);
+						case NewLine.FF:
+							return new Delimiter ((int)(p - start), UnicodeNewline.FF);
+						case NewLine.LS:
+							return new Delimiter ((int)(p - start), UnicodeNewline.LS);
+						case NewLine.PS:
+							return new Delimiter ((int)(p - start), UnicodeNewline.PS);
+						}
+						p++;
 					}
-					p++;
-				}
-				return Delimiter.Invalid;
-			}
+					return Delimiter.Invalid;
+				},
+				(charPtr) => {
+					char* start = charPtr.Value;
+					char* p = start + offset;
+					char* endPtr = start + text.Length;
+
+					while (p < endPtr) {
+						switch (*p) {
+						case NewLine.CR:
+							char* nextp = p + 1;
+							if (nextp < endPtr && *nextp == NewLine.LF)
+								return new Delimiter ((int)(p - start), UnicodeNewline.CRLF);
+							return new Delimiter ((int)(p - start), UnicodeNewline.CR);
+						case NewLine.LF:
+							return new Delimiter ((int)(p - start), UnicodeNewline.LF);
+						case NewLine.NEL:
+							return new Delimiter ((int)(p - start), UnicodeNewline.NEL);
+						case NewLine.VT:
+							return new Delimiter ((int)(p - start), UnicodeNewline.VT);
+						case NewLine.FF:
+							return new Delimiter ((int)(p - start), UnicodeNewline.FF);
+						case NewLine.LS:
+							return new Delimiter ((int)(p - start), UnicodeNewline.LS);
+						case NewLine.PS:
+							return new Delimiter ((int)(p - start), UnicodeNewline.PS);
+						}
+						p++;
+					}
+					return Delimiter.Invalid;
+				});
 		}
 
 		#region Line segment tree
