@@ -58,5 +58,5 @@
 	branch = monodevelop
 [submodule "main/external/roslyn"]
 	path = main/external/roslyn
-	url = git://github.com/mono/roslyn.git
+	url = git://github.com/evincarofautumn/roslyn.git
 	branch = monodevelop_bin
