@@ -37,17 +37,17 @@
 	branch = master
 [submodule "main/external/monomac"]
 	path = main/external/monomac
-	url = ~/Projects/monomac/
+	url = git://github.com/evincarofautumn/monomac.git
 [submodule "main/external/sharpsvn-binary"]
 	path = main/external/sharpsvn-binary
 	url = git://github.com/mono/sharpsvn-binary.git
 [submodule "main/external/libgit2sharp"]
 	path = main/external/libgit2sharp
-	url = ~/Projects/libgit2sharp
+	url = git://github.com/evincarofautumn/libgit2sharp.git
 	branch = xs-6.0-v1
 [submodule "main/external/libgit-binary"]
 	path = main/external/libgit-binary
-	url = ~/Projects/libgit-binary
+	url = git://github.com/evincarofautumn/libgit-binary.git
 [submodule "main/external/libgit2"]
 	path = main/external/libgit2
 	url = git://github.com/mono/libgit2.git
